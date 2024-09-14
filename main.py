@@ -14,9 +14,7 @@ import numpy as np
 import queue
 import librosa
 import sys
-import threading
 import matplotlib.pyplot as plt
-import librosa.display as display
 
 
 class Ui_MainWindow(object):
@@ -26,7 +24,7 @@ class Ui_MainWindow(object):
     Is_denoise = False
 
     sr = 44100
-    assert sr % 2 == 0
+    # sr = 11025
     dt = 1 / sr
     t = np.arange(0, 1, dt)
     n = len(t)
@@ -46,10 +44,10 @@ class Ui_MainWindow(object):
         self.IsChanging = QtWidgets.QPushButton(self.frame)
         self.VolumeBar = QtWidgets.QProgressBar(self.frame)
         self.mic_btn = QtWidgets.QPushButton(self.frame)
-        self.pitch_mul = QtWidgets.QSlider(self.frame)
-        self.pitch_mul_label = QtWidgets.QLabel(self.frame)
-        self.pitch_add_label = QtWidgets.QLabel(self.frame)
-        self.pitch_add = QtWidgets.QSlider(self.frame)
+        self.n_steps = QtWidgets.QSlider(self.frame)
+        self.n_steps_label = QtWidgets.QLabel(self.frame)
+        self.bins_per_octave_label = QtWidgets.QLabel(self.frame)
+        self.bins_per_octave = QtWidgets.QSlider(self.frame)
 
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
 
@@ -121,32 +119,32 @@ class Ui_MainWindow(object):
 
         font = QtGui.QFont()
         font.setPointSize(12)
-        # pitch_mul
-        self.pitch_mul.setGeometry(QtCore.QRect(280, 0, 22, 160))
-        self.pitch_mul.setOrientation(QtCore.Qt.Vertical)
-        self.pitch_mul.setObjectName("pitch mul")
-        self.pitch_mul.valueChanged.connect(self.pitch_mul_SliderValue)
-        # pitch_mul label
-        self.pitch_mul_label.setGeometry(QtCore.QRect(240, 160, 100, 20))
-        self.pitch_mul_label.setFont(font)
-        self.pitch_mul_label.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.pitch_mul_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.pitch_mul_label.setObjectName("pitch_mul_label")
-        self.pitch_mul.setProperty("value", 43)
+        # n_steps
+        self.n_steps.setGeometry(QtCore.QRect(280, 0, 22, 160))
+        self.n_steps.setOrientation(QtCore.Qt.Vertical)
+        self.n_steps.setObjectName("n_steps")
+        self.n_steps.valueChanged.connect(self.n_stepsSliderValue)
+        # n_steps label
+        self.n_steps_label.setGeometry(QtCore.QRect(240, 160, 100, 20))
+        self.n_steps_label.setFont(font)
+        self.n_steps_label.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.n_steps_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.n_steps_label.setObjectName("n_steps_label")
+        self.n_steps.setProperty("value", 58)
 
-        # pitch_add
-        self.pitch_add.setGeometry(QtCore.QRect(410, 0, 22, 160))
-        self.pitch_add.setOrientation(QtCore.Qt.Vertical)
-        self.pitch_add.setObjectName("pitch_add")
-        self.pitch_add.valueChanged.connect(self.pitch_add_SliderValue)
-        # pitch_add_label
-        self.pitch_add_label.setGeometry(QtCore.QRect(340, 160, 160, 21))
-        self.pitch_add_label.setFont(font)
-        self.pitch_add_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.pitch_add_label.setObjectName("pitch_add_label")
-        self.pitch_add.setMinimum(0)
-        self.pitch_add.setMaximum(80)
-        self.pitch_add.setSingleStep(5)
+        # bins_per_octave
+        self.bins_per_octave.setGeometry(QtCore.QRect(410, 0, 22, 160))
+        self.bins_per_octave.setOrientation(QtCore.Qt.Vertical)
+        self.bins_per_octave.setObjectName("bins_per_octave")
+        self.bins_per_octave.valueChanged.connect(self.bins_per_octaveSliderValue)
+        # bins_per_octave_label
+        self.bins_per_octave_label.setGeometry(QtCore.QRect(340, 160, 160, 21))
+        self.bins_per_octave_label.setFont(font)
+        self.bins_per_octave_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.bins_per_octave_label.setObjectName("bins_per_octave_label")
+        self.bins_per_octave.setMinimum(12)
+        self.bins_per_octave.setMaximum(24)
+        self.bins_per_octave.setSingleStep(2)
 
         # set groupBox
         self.groupBox.setGeometry(QtCore.QRect(10, 250, 781, 301))
@@ -238,9 +236,9 @@ class Ui_MainWindow(object):
         self.OutputVolume_label.setText(_translate("MainWindow", "Output volume"))
         self.test_btn.setText(_translate("MainWindow", "Test"))
         self.IsChanging_label.setText(_translate("MainWindow", ""))
-        self.pitch_add_label.setText(
-            _translate("MainWindow", "pitch add: " + str(self.pitch_add.value())))
-        self.pitch_mul_label.setText(_translate("MainWindow", "pitch mul: " + str("{0:.2f}".format(1 + self.pitch_mul.value() / 100))))
+        self.bins_per_octave_label.setText(
+            _translate("MainWindow", "bins_per_octave " + str(self.bins_per_octave.value())))
+        self.n_steps_label.setText(_translate("MainWindow", "n_steps " + str(self.n_steps.value() / 10)))
         self.Denoise.setText(_translate("MainWindow", "Denoise? N"))
 
     def mic_clicked(self):
@@ -276,186 +274,110 @@ class Ui_MainWindow(object):
     def OutSliderValue(self):
         self.OutputVolumeValue_label.setText(str(self.OutputVolume_bar.value()) + "%")
 
-    def pitch_mul_SliderValue(self):
-        self.pitch_mul_label.setText("pitch mul: " + str("{0:.2f}".format(1 + self.pitch_mul.value() / 100)))
+    def n_stepsSliderValue(self):
+        self.n_steps_label.setText("n_steps " + str(self.n_steps.value() / 10))
 
-    def pitch_add_SliderValue(self):
-        self.pitch_add_label.setText("pitch add " + str(self.pitch_add.value() / 10))
+    def bins_per_octaveSliderValue(self):
+        self.bins_per_octave_label.setText("bins_per_octave " + str(self.bins_per_octave.value()))
 
     # special thanks to https://youtu.be/s2K1JfNR7Sc
     # a hands to hands fft denoise tutorial/lecture
-    def failed_voice_change_fft(self, data):
+    def de_noise(self, data):
         fhat = np.fft.fft(data.squeeze(), self.n)
-        fhat[:60] *= 0 # remove the unknow 50Hz peak in the signal, it is not human voice anyway
-        girl_fhat = np.zeros(fhat.shape, dtype=complex)
+        power = fhat * np.conj(fhat)
 
-        for x in range(int(girl_fhat.shape[0]/2)):
-            girl_fhat[2*x] = fhat[x]                # up pitch by putting frequencies in x to 2x
-                                                    # for example 120Hz is now 240Hz
-            if x > 0:
-                girl_fhat[2*x-1] = (girl_fhat[2*x] + girl_fhat[2*x-2])/2
+        indices = power > 1
+        fhat = indices * fhat
 
-        girl_power = girl_fhat * np.conj(girl_fhat) / self.n
-        denoised_girl_fhat = (girl_power > (200/self.n)) * girl_fhat
-
-        girl_ifft = np.fft.ifft(denoised_girl_fhat).real
-
-        # girl_output =  girl_ifft
-        girl_output = np.zeros(girl_ifft.shape)
-
-        girl_output = self.average_smooth(girl_output)
-
-        man_power = fhat * np.conj(fhat) / self.n
-
-        """"""
-
-        fig, axs = plt.subplots(2,1)
-
-
-        plt.sca(axs[0])
-        # plt.plot(self.freq[self.L], man_power.real[self.L])
-        # plt.xlim(self.freq[self.L[0]], 2000)
-        # plt.specgram(np.fft.ifft(fhat).real, Fs=self.sr)
-        # plt.xlabel('Time')
-        # plt.ylabel('frequency')
-
-        plt.plot(self.t, data)
-
-        plt.sca(axs[1])
-        # plt.plot(self.freq[self.L], girl_power.real[self.L])
-        # plt.xlim(self.freq[self.L[0]], 2000)
-
-        # plt.specgram(girl_output, Fs=self.sr)
-        # plt.xlabel('Time')
-        # plt.ylabel('frequency')
-
-        plt.plot(self.t, girl_output)
-
+        plt.plot(self.freq[self.L], power.real[self.L])
+        plt.xlim(self.freq[self.L[0]], 500)
         plt.show()
 
-        return girl_output
+        return np.fft.ifft(fhat).real
 
-    def failed_voice_change_up_pitch(self, data):
-        # fig, axs = plt.subplots(2, 1)
-        #
-        # plt.sca(axs[0])
-        # plt.specgram(data, Fs=self.sr, NFFT=2048)
-        # plt.ylim(0, 2500)
-
-        data =  0.75 * librosa.effects.pitch_shift(data, self.sr,
-                                                  n_steps=self.pitch_mul.value() / 10,
-                                                  bins_per_octave=self.pitch_add.value(),
-                                                  res_type="kaiser_fast")  + \
-                0.15 * librosa.effects.pitch_shift(data, self.sr,
-                                                  n_steps=self.pitch_mul.value() * 1.6 / 10,
-                                                  bins_per_octave=self.pitch_add.value(),
-                                                  res_type="kaiser_fast")
-
-        # plt.sca(axs[1])
-        # plt.specgram(data, Fs=self.sr, NFFT=2048)
-        # plt.ylim(0, 2500)
-
-        plt.show()
-        return data
-
-    def gaussian_smooth(self, data):
+    def smooth(self, data):
         # [0.25, 0.5, 0.25], [0.05, 0.2, 0.5, 0.2, 0.05]
-        gaussian = np.array([0.15, 0.2, 0.4, 0.2, 0.15])
-        return np.convolve(data, gaussian, "same")
+        gaussian = np.array([0.05, 0.2, 0.5, 0.2, 0.05])
+        average = np.array([1, 1, 1, 1, 1, 1, 1])/7
+        return np.convolve(data, average, "same")
 
-    def average_smooth(self, data):
-        average_3 = np.array([1, 1, 1])/3
-        average_5 = np.array([1, 1, 1, 1, 1])/5
-        average_7 = np.array([1, 1, 1, 1, 1, 1, 1])/7
-        average_9 = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1])/9
-        average_11 = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]) / 11
-        return np.convolve(data, average_5, "same")
+    #Extract Freq in similar to remove noise
+    def extract_freq(self, data):
+        length = (int) (self.n)
+        fhat = np.fft.fft(data.squeeze(), self.n)
+        psd = fhat * np.conj(fhat) / self.n
+
+        indices = psd > 1
+        fhat = indices * fhat
+        psdClean = indices * psd
+
+        fhat2 = np.zeros(self.n,dtype=np.complex)
+        divi = (int)(self.n_steps.value())
+        half = (int) (length/divi)
+        for i in range(half):
+            fhat2[divi * i] = (fhat[(divi-1)*i] + 0)/2
+            fhat2[divi * (i + 1) - 1] = (fhat[(divi - 1) * (i+1) - 1] + 0) / 2
+            for j in range(divi - 1):
+                fhat2[divi * i + j + 1] = (fhat[(divi-1)*i+j] + fhat[(divi-1)*i+j+1])/2
+        fhat2 = 0.88 * fhat2
+
+        psd2 = fhat2 * np.conj(fhat2) / self.n
+        indices2 = psd2 > 1
+        psdClean2 = indices2 * psd2
+
+        plt.plot(self.freq[self.L], psdClean.real[self.L])
+        plt.plot(self.freq[self.L], psdClean2.real[self.L])
+        plt.xlim(self.freq[self.L[0]], 500)
+
+        plt.show()
+
+        return np.fft.ifft(fhat2).real
 
     def handleNewData(self, indata, outdata, frames, time, status):
         copy = indata.copy()
-        # print(indata)
-        indata *= 2
-        # indata = self.de_noise(indata)
-
-        #print(indata.shape)
-
-        def denoise(data, method):
-            if method == "fast":
-                return self.average_smooth(data)
-
-            elif method == "fft":
-                fhat = np.fft.fft(data.squeeze(), self.n)
-                fhat[:60] *= 0  # remove the unknow 50Hz peak in the signal, it is not human voice anyway
-                power = fhat * np.conj(fhat)
-                indices = power > 20
-                fhat = indices * fhat
-                return np.fft.ifft(fhat).real
-
-            else:
-                return -1
-
-        def stft_to_girl(data):
-            data = self.average_smooth(data)
-            shape = data.squeeze().shape
-            stft = librosa.stft(data.squeeze(), 4096)
-            stft_copy = np.zeros(stft.shape, dtype=complex)
-            pitch_mul = self.pitch_mul.value() / 100
-            pitch_add = self.pitch_add.value() / 10
-            print(pitch_mul, pitch_add)
-
-            # increase frequency by moving every frequency bin value
-            # to a higher frequency bin
-            for x in range(int(stft.shape[0] / 2)):
-                stft_copy[int((1 + pitch_mul) * x + pitch_add)] = stft[x]
-
-            istft = librosa.istft(stft_copy)
-
-            # reshape the data as the stft method reduces the output dimension
-            istft = librosa.resample(istft, istft.shape[0], self.sr-1)
-
-            return istft
+        indata *= 3
+        # de noice
+        if self.Is_denoise:
+            indata = self.extract_freq(indata)
+            #indata = self.de_noise(indata)
+        else:
+            pass
 
         indata *= self.InputVolume_bar.value() / 100
-
         """ handles the asynchroneously collected sound chunks """
         if self.Is_micOn:
-            indata = indata.squeeze()
-
-            # fig, axs = plt.subplots(2, 1)
-            #
-            # plt.sca(axs[0])
-            # plt.specgram(indata, Fs=self.sr, NFFT=4096)
-            # plt.ylim(0, 2500)
-            if self.Is_changing and self.Is_denoise:
-                indata = stft_to_girl(indata)
-                indata = denoise(indata, "fast")
-
-            elif self.Is_changing and not self.Is_denoise:
+            if self.Is_changing:
                 # preform man to girl voice change
-                indata = stft_to_girl(indata)
-            elif not self.Is_changing and self.Is_denoise:
-                indata = denoise(indata, "fast")
-            elif not self.Is_changing and not self.Is_denoise:
-                pass
-            # plt.sca(axs[1])
-            # plt.specgram(indata, Fs=self.sr, NFFT=4096)
-            # plt.ylim(0, 2500)
-            # plt.show()
 
-            indata = np.array([indata])
-            outdata[:] = indata.T
+                indata = indata.squeeze()
+                # indata = librosa.effects.pitch_shift(indata, self.sr,
+                #                                      n_steps=self.n_steps.value()/10,
+                #                                      bins_per_octave=self.bins_per_octave.value(),
+                #                                      res_type="kaiser_best")
+                indata = 0.25 * librosa.effects.pitch_shift(indata, self.sr,
+                                                            n_steps=self.n_steps.value() / 10,
+                                                            bins_per_octave=self.bins_per_octave.value(),
+                                                            res_type="kaiser_fast") + \
+                         0.75 * librosa.effects.pitch_shift(indata, self.sr,
+                                                            n_steps=self.n_steps.value() * 1.5 / 10,
+                                                            bins_per_octave=self.bins_per_octave.value(),
+                                                            res_type="kaiser_fast")
+                indata = self.smooth(indata)
+                indata = np.array([indata])
 
+                # print(indata.T.shape)
+                outdata[:] = indata.T
+                # print(outdata)
+            else:
+                indata = np.array([indata])
+                outdata[:] = indata.T
             outdata *= (self.OutputVolume_bar.value() / 100)
 
         else:
             outdata[:] = np.zeros(copy.shape)
             outdata *= (self.OutputVolume_bar.value()) / 100
 
-        # smooth the data to erase robotic sound
-
-        # self.threading.Lock.acquire()
         self.VolumeBar.setValue(int(outdata.max() * 100))
-        # self.threading.Lock.release()
 
 
 if __name__ == "__main__":
