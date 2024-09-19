@@ -16,6 +16,7 @@ import librosa
 import sys
 import matplotlib.pyplot as plt
 
+from media_manager import MediaManager
 
 class Ui_MainWindow(object):
     q = queue.Queue()
@@ -66,6 +67,8 @@ class Ui_MainWindow(object):
         self.test_btn = QtWidgets.QPushButton(self.groupBox)
         self.TestVolumeBar = QtWidgets.QProgressBar(self.groupBox)
 
+        self.media_manager = MediaManager()
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -91,7 +94,7 @@ class Ui_MainWindow(object):
         self.IsChanging.setGeometry(QtCore.QRect(10, 100, 61, 51))
         self.IsChanging.setText("")
         self.IsChanging.setObjectName("IsChanging")
-        self.IsChanging.setIcon(QtGui.QIcon("off-air btn.jpg"))
+        self.IsChanging.setIcon(self.media_manager.off_air_btn_icon)
         self.IsChanging.clicked.connect(self.voice_changing)
 
         # Is Changing label
@@ -106,7 +109,7 @@ class Ui_MainWindow(object):
         self.mic_btn.setText("")
         self.mic_btn.clicked.connect(self.mic_clicked)
 
-        self.mic_btn.setIcon(QtGui.QIcon("micOff.png"))
+        self.mic_btn.setIcon(self.media_manager.mic_off_icon)
         self.mic_btn.setIconSize(QtCore.QSize(128, 128))
         self.mic_btn.setObjectName("mic_btn")
 
@@ -243,21 +246,21 @@ class Ui_MainWindow(object):
 
     def mic_clicked(self):
         if self.Is_micOn:
-            self.mic_btn.setIcon(QtGui.QIcon("micOff.png"))
+            self.mic_btn.setIcon(self.media_manager.mic_off_icon)
             self.Is_micOn = False
 
         else:
-            self.mic_btn.setIcon(QtGui.QIcon("micOn.png"))
+            self.mic_btn.setIcon(self.media_manager.mic_on_icon)
             self.Is_micOn = True
 
     def voice_changing(self):
         if self.Is_changing:
             self.IsChanging_label.setText("")
-            self.IsChanging.setIcon(QtGui.QIcon("off-air btn.jpg"))
+            self.IsChanging.setIcon(self.media_manager.off_air_btn_icon)
             self.Is_changing = False
         else:
             self.IsChanging_label.setText("Changing")
-            self.IsChanging.setIcon(QtGui.QIcon("On-air btn.jpg"))
+            self.IsChanging.setIcon(self.media_manager.on_air_btn_icon)
             self.Is_changing = True
 
     def de_noise_btn(self):
