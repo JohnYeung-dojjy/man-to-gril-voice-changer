@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
+    <width>716</width>
     <height>261</height>
    </rect>
   </property>
@@ -16,9 +16,9 @@
   <widget class="QGroupBox" name="verticalGroupBox">
    <property name="geometry">
     <rect>
-     <x>15</x>
+     <x>50</x>
      <y>20</y>
-     <width>101</width>
+     <width>171</width>
      <height>161</height>
     </rect>
    </property>
@@ -34,7 +34,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Denoise</string>
+       <string>Denoise? N</string>
       </property>
       <property name="checkable">
        <bool>false</bool>
@@ -56,7 +56,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../media/micOff.png</normaloff>../media/micOff.png</iconset>
+        <normaloff>../media/changer_off.png</normaloff>../media/changer_off.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -67,13 +67,13 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="mute_btn">
+     <widget class="QPushButton" name="mic_btn">
       <property name="text">
        <string/>
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../media/off-air btn.jpg</normaloff>../media/off-air btn.jpg</iconset>
+        <normaloff>../media/mic_off.jpg</normaloff>../media/mic_off.jpg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -88,7 +88,7 @@
   <widget class="QGroupBox" name="formGroupBox">
    <property name="geometry">
     <rect>
-     <x>135</x>
+     <x>260</x>
      <y>10</y>
      <width>321</width>
      <height>184</height>
@@ -180,9 +180,9 @@
   <widget class="QProgressBar" name="audio_intensity">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>50</x>
      <y>210</y>
-     <width>461</width>
+     <width>541</width>
      <height>20</height>
     </rect>
    </property>
