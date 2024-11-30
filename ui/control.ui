@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>716</width>
-    <height>261</height>
+    <width>583</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,48 +85,48 @@
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="formGroupBox">
+  <widget class="QProgressBar" name="audio_intensity">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>10</y>
-     <width>321</width>
-     <height>184</height>
+     <x>50</x>
+     <y>210</y>
+     <width>541</width>
+     <height>20</height>
     </rect>
    </property>
-   <layout class="QFormLayout" name="VoiceChangeSliders">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetDefaultConstraint</enum>
-    </property>
-    <property name="fieldGrowthPolicy">
-     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-    </property>
-    <property name="labelAlignment">
-     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-    </property>
-    <property name="formAlignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-    <property name="horizontalSpacing">
-     <number>10</number>
-    </property>
-    <property name="verticalSpacing">
-     <number>53</number>
-    </property>
-    <property name="leftMargin">
-     <number>6</number>
-    </property>
-    <property name="topMargin">
-     <number>6</number>
-    </property>
-    <property name="rightMargin">
-     <number>6</number>
-    </property>
-    <property name="bottomMargin">
-     <number>6</number>
-    </property>
+   <property name="value">
+    <number>100</number>
+   </property>
+   <property name="format">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="gridGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>20</y>
+     <width>321</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="1">
-     <widget class="QSlider" name="n_steps_slider">
+     <widget class="QLabel" name="n_steps_value">
+      <property name="text">
+       <string>0.0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="octave_value">
+      <property name="text">
+       <string>0.0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QSlider" name="octave_slider">
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -150,8 +150,8 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QSlider" name="octave_slider">
+    <item row="0" column="2">
+     <widget class="QSlider" name="n_steps_slider">
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -176,22 +176,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QProgressBar" name="audio_intensity">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>210</y>
-     <width>541</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="value">
-    <number>100</number>
-   </property>
-   <property name="format">
-    <string/>
-   </property>
   </widget>
  </widget>
  <resources/>
