@@ -28,6 +28,8 @@ class AppMainWindow(QMainWindow):
 
         uic.loadUi(Path("ui", "control.ui"), self)
 
+        print(sorted(list(self.__dict__.keys())))
+
     @QtCore.pyqtSlot()
     def on_mic_btn_clicked(self):
         # toggle the btn
@@ -47,3 +49,11 @@ class AppMainWindow(QMainWindow):
         # toggle the btn
         self.vc_status.denoising = not self.vc_status.denoising
         self.denoise_btn.setText(f"Denoise? {'Y' if self.vc_status.denoising else 'N'}")
+
+    @QtCore.pyqtSlot(int) # somehow does not work if type is not given
+    def on_n_steps_slider_valueChanged(self, value):
+        self.n_steps_value.setText(f"{value / 10}")
+
+    @QtCore.pyqtSlot(int) # somehow does not work if type is not given
+    def on_octave_slider_valueChanged(self, value):
+        self.octave_value.setText(f"{value / 10}")
