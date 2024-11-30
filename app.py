@@ -1,14 +1,13 @@
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import uic
+from app_ui import AppMainWindow
 import sys
 
 class App:
     def __init__(self, system_arguments: list[str]):
         self.app = QApplication(system_arguments)
-        self.app_main_window = QMainWindow()
-        self.ui_main_window = uic.loadUi(Path("ui", "control.ui"), self.app_main_window)
-
+        self.app_main_window = AppMainWindow()
 
     def show_window(self):
         self.app_main_window.show()
