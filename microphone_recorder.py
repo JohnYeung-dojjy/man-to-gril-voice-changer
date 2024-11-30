@@ -1,3 +1,5 @@
+# Code copied from https://flothesof.github.io/pyqt-microphone-fft-application.html
+
 # class taken from the SciPy 2015 Vispy talk opening example
 # see https://github.com/vispy/vispy/pull/928
 import pyaudio
