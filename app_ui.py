@@ -11,15 +11,6 @@ class VoiceChangerStatus:
     voice_changing: bool = False
     denoising: bool = False
 
-def mic_callback(vc_status: VoiceChangerStatus, media_manager: MediaManager):
-    if vc_status.mic_on:
-        media_manager.mic_on_icon
-    else:
-        media_manager.mic_off_icon
-
-    # toggle the btn
-    vc_status.mic_on = not vc_status.mic_on
-
 class AppMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
