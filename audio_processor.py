@@ -9,9 +9,9 @@ class AudioProcessor:
     ):
         dt = 1/sr
         t = np.arange(0, 1, dt)
-        window_length = len(t)
-        self.frequency = (1 / (dt * window_length)) * np.arange(window_length)
-        self.L = np.arange(1, np.floor(window_length / 2), dtype=np.int64)
+        self.window_length = len(t)
+        self.frequency = (1 / (dt * self.window_length)) * np.arange(self.window_length)
+        self.L = np.arange(1, np.floor(self.window_length / 2), dtype=np.int64)
 
     # special thanks to https://youtu.be/s2K1JfNR7Sc
     # a hands to hands fft denoise tutorial/lecture
@@ -35,7 +35,7 @@ class AudioProcessor:
         return np.convolve(data, average, "same")
 
     #Extract Freq in similar to remove noise
-    def extract_freq(self, data: np.ndarray):
+    def extract_freq(self, data: np.ndarray, n_steps: int):
         fhat = np.fft.fft(data.squeeze(), self.window_length)
         psd = fhat * np.conj(fhat) / self.window_length
 
@@ -43,9 +43,9 @@ class AudioProcessor:
         fhat = indices * fhat
         psdClean = indices * psd
 
-        fhat2 = np.zeros(self.window_length,dtype=np.complex)
-        divi = (int)(self.window_length_steps.value())
-        half = (int) (self.window_length/divi)
+        fhat2 = np.zeros(self.window_length,dtype=np.complex128)
+        divi = n_steps
+        half = self.window_length//n_steps
         for i in range(half):
             fhat2[divi * i] = (fhat[(divi-1)*i] + 0)/2
             fhat2[divi * (i + 1) - 1] = (fhat[(divi - 1) * (i+1) - 1] + 0) / 2
@@ -57,9 +57,9 @@ class AudioProcessor:
         indices2 = psd2 > 1
         psdClean2 = indices2 * psd2
 
-        plt.plot(self.freq[self.L], psdClean.real[self.L])
-        plt.plot(self.freq[self.L], psdClean2.real[self.L])
-        plt.xlim(self.freq[self.L[0]], 500)
+        plt.plot(self.frequency[self.L], psdClean.real[self.L])
+        plt.plot(self.frequency[self.L], psdClean2.real[self.L])
+        plt.xlim(self.frequency[self.L[0]], 500)
 
         plt.show()
 
