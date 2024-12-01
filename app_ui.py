@@ -1,15 +1,9 @@
 from pathlib import Path
+import queue
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from media_manager import MediaManager
-
-from dataclasses import dataclass
-
-@dataclass
-class VoiceChangerStatus:
-    mic_on: bool = False
-    voice_changing: bool = False
-    denoising: bool = False
+from ui_status import VoiceChangerStatus
 
 class AppMainWindow(QMainWindow):
     def __init__(self):
