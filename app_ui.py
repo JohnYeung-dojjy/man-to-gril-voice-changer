@@ -19,8 +19,6 @@ class AppMainWindow(QMainWindow):
 
         uic.loadUi(Path("ui", "control.ui"), self)
 
-        print(sorted(list(self.__dict__.keys())))
-
     @QtCore.pyqtSlot()
     def on_mic_btn_clicked(self):
         # toggle the btn
