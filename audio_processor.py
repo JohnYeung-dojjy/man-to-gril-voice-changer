@@ -1,17 +1,34 @@
+from typing import Any, Callable
 import numpy as np
 import librosa
 import matplotlib.pyplot as plt
-
+from PyQt5 import QtCore
+import sounddevice as sd
 
 class AudioProcessor:
     def __init__(self,
         sr: int = 44100,
     ):
+        self.stream = sd.Stream(
+            samplerate=sr,
+            blocksize=sr,
+            channels=1, # single channel only
+            callback=self.change_voice,
+        )
         dt = 1/sr
         t = np.arange(0, 1, dt)
         self.window_length = len(t)
         self.frequency = (1 / (dt * self.window_length)) * np.arange(self.window_length)
         self.L = np.arange(1, np.floor(self.window_length / 2), dtype=np.int64)
+
+    def start_stream(self):
+        """This method starts both input and output audio stream"""
+        self.stream.start()
+
+    def close_stream(self):
+        """close the stream, called after the application event loop ended"""
+        self.stream.stop()
+        self.stream.close()
 
     # special thanks to https://youtu.be/s2K1JfNR7Sc
     # a hands to hands fft denoise tutorial/lecture
@@ -64,3 +81,6 @@ class AudioProcessor:
         plt.show()
 
         return np.fft.ifft(fhat2).real
+
+    def change_voice(self, indata, outdata, frames, time, status):
+        """Supplied to sounddevice stream as callback"""

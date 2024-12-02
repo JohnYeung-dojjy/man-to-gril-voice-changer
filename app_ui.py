@@ -2,6 +2,7 @@ from pathlib import Path
 import queue
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtWidgets import QApplication, QMainWindow
+from audio_processor import AudioProcessor
 from media_manager import MediaManager
 from ui_status import VoiceChangerStatus
 
@@ -10,7 +11,8 @@ class AppMainWindow(QMainWindow):
         super().__init__()
         self.media_manager = MediaManager()
         self.vc_status = VoiceChangerStatus()
-
+        self.audio_processor = AudioProcessor()
+        self.audio_processor.start_stream()
         uic.loadUi(Path("ui", "control.ui"), self)
 
     @QtCore.pyqtSlot()

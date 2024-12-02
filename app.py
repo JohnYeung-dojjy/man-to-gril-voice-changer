@@ -14,7 +14,9 @@ class App:
 
     def run(self):
         """Start the pyqt event loop, return the exit code"""
-        return self.app.exec_()
+        exit_code = self.app.exec_()
+        self.app_main_window.audio_processor.close_stream()
+        return exit_code
 
 def main(system_arguments: list[str]):
     app = App(system_arguments)
