@@ -13,7 +13,7 @@ class AppMainWindow(QMainWindow):
         super().__init__()
         self.media_manager = MediaManager()
         self.vc_status = VoiceChangerStatus()
-        self.audio_processor = AudioProcessor()
+        self.audio_processor = AudioProcessor(sr=22050)
         self.audio_processor.start_stream()
         uic.loadUi(Path("ui", "control.ui"), self)
 
@@ -57,7 +57,7 @@ class AppMainWindow(QMainWindow):
         if not self.vc_status.mic_on:
             return
         if self.vc_status.denoising:
-            input_audio = self.audio_processor.extract_freq(input_audio, self.n_steps_slider.value() / 10)
+            input_audio = self.audio_processor.de_noise(input_audio)
         if self.vc_status.voice_changing:
             input_audio = self.audio_processor.change_voice(input_audio, self.n_steps_slider.value() / 10, self.octave_slider.value())
         self.audio_processor.write_to_output_stream(np.expand_dims(input_audio, 0).T)
