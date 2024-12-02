@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>VoiceChanger</string>
   </property>
   <widget class="QGroupBox" name="verticalGroupBox">
    <property name="geometry">
