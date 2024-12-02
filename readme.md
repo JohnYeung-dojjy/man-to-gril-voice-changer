@@ -1,4 +1,6 @@
-This read me file is a documentation on what does this man to girl application do and how users can use the GUI
+Developed with python 3.10
+
+This readme file is a documentation on what does this man to girl application do and how users can use the GUI
 
 The audio signal are processed in a 1 second interval
 
