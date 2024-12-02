@@ -41,4 +41,5 @@ class AppMainWindow(QMainWindow):
 
     @QtCore.pyqtSlot(int) # somehow does not work if type is not given
     def on_octave_slider_valueChanged(self, value):
-        self.octave_value.setText(f"{value / 10}")
+        """Value should be 12-24 with a step of 2"""
+        self.octave_value.setText(f"{value}")

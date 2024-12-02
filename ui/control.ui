@@ -85,7 +85,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QProgressBar" name="audio_intensity">
+  <widget class="QProgressBar" name="audio_intensity_bar">
    <property name="geometry">
     <rect>
      <x>50</x>
@@ -114,14 +114,14 @@
     <item row="0" column="1">
      <widget class="QLabel" name="n_steps_value">
       <property name="text">
-       <string>0.0</string>
+       <string>58</string>
       </property>
      </widget>
     </item>
     <item row="1" column="1">
      <widget class="QLabel" name="octave_value">
       <property name="text">
-       <string>0.0</string>
+       <string>12</string>
       </property>
      </widget>
     </item>
@@ -129,6 +129,15 @@
      <widget class="QSlider" name="octave_slider">
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="minimum">
+       <number>12</number>
+      </property>
+      <property name="maximum">
+       <number>24</number>
+      </property>
+      <property name="singleStep">
+       <number>2</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -154,6 +163,9 @@
      <widget class="QSlider" name="n_steps_slider">
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="value">
+       <number>58</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
